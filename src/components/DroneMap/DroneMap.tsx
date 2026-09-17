@@ -37,10 +37,9 @@ export default function DroneMap({ drones = [] }: DroneMapProps) {
         zoomControl: false,
       });
 
-      // Tile dark style (CartoDB Dark Matter)
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-        attribution: '© OpenStreetMap © CARTO',
-        subdomains: 'abcd',
+      // Tile dark style - Stadia Maps Alidade Smooth Dark (gratuito, sem API key)
+      L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://stamen.com">Stamen Design</a> &copy; <a href="https://stadiamaps.com/">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a>',
         maxZoom: 20,
       }).addTo(map);
 
