@@ -1,6 +1,24 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.SUPABASE_URL || '';
-const supabaseKey = process.env.SUPABASE_KEY || ''; // Deve ser a Service Role Key para as funções de backend, ou Anon Key se tiver RLS configurado
+let _client: SupabaseClient | null = null;
 
-export const supabase = createClient(supabaseUrl, supabaseKey);
+// Inicialização lazy: o cliente só é criado na primeira chamada de API (em runtime),
+// não durante o build do Next.js, evitando o erro "Invalid supabaseUrl".
+export function getSupabase(): SupabaseClient {
+  if (!_client) {
+    const url = process.env.SUPABASE_URL;
+    const key = process.env.SUPABASE_KEY;
+    if (!url || !key) {
+      throw new Error('Variáveis SUPABASE_URL e SUPABASE_KEY não configuradas.');
+    }
+    _client = createClient(url, key);
+  }
+  return _client;
+}
+
+// Proxy para manter compatibilidade com o código existente que usa `supabase.from(...)`
+export const supabase = new Proxy({} as SupabaseClient, {
+  get(_, prop) {
+    return getSupabase()[prop as keyof SupabaseClient];
+  }
+});
